@@ -1,7 +1,7 @@
 <template>
-	<div class="header">
-		header
-	</div> 
+
+<div>seller</div>
+
 </template>
 
 <script type="text/ecmascript">
@@ -12,7 +12,7 @@ export default{
 
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style>
 
 
 	
