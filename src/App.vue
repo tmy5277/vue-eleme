@@ -1,29 +1,48 @@
 <template>
-<div id="app">
-  <vheader></vheader>
-  <div class="tab border-1px">
-    <div class="tab-item">
-    <router-link :to='{name:"goods"}'>商品</router-link>
+  <div id="app">
+    <vheader :seller = "seller"></vheader>
+    <div class="tab border-1px">
+      <div class="tab-item">
+      <router-link :to='{name:"goods"}'>商品</router-link>
+      </div>
+      <div class="tab-item">
+      <router-link :to='{name:"ratings"}'>评论</router-link>
+      </div>
+      <div class="tab-item">
+      <router-link :to='{name:"seller"}'>商家</router-link>
+      </div>
     </div>
-    <div class="tab-item">
-    <router-link :to='{name:"ratings"}'>评论</router-link>
-    </div>
-    <div class="tab-item">
-    <router-link :to='{name:"seller"}'>商家</router-link>
-    </div>
+    <router-view></router-view>
   </div>
-  <router-view></router-view>
-</div>
 </template>
 
 <script>
-import vheader from './components/header/header.vue';
+
+import vheader from 'components/header/header.vue';
+
+const ERR_OK =0;
 
 export default {
   name: 'app',
+  data() {
+    return{
+      seller: {},
+    };
+  },
+  created(){
+    this.$http.get("/api/seller").then((response)=>{
+      response = response.data;
+      if (response.errno===ERR_OK) 
+      {
+        this.seller = response.data;
+        // console.log(this.seller);
+      }
+    });
+  },
   components:{
     vheader,
-  }
+  },
+
 };
 </script>
 
