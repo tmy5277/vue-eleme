@@ -37,8 +37,9 @@
 		<div class="background">
 			<img :src="seller.avatar" width="100%" height="100%">
 		</div>
-
-		<div v-show="detailShow" class="detail" transition="fade">
+		
+		<transition name="fade">
+		<div v-show="detailShow" class="detail">
 			<div class="detail-wrapper clearfix">
 				<div class="detail-main">
 					<h1 class="name">{{seller.name}}</h1>
@@ -52,10 +53,12 @@
 						<div class="line"></div>
 					</div>
 					<ul v-if="seller.supports" class="supports">
-						<li class="support-item" v-for="item in seller.supports">
-							<span class="icon" :class="classMap[seller.supports[$index].type]">
+						<li class="support-item" v-for="(item,index) in seller.supports">
+							<span class="icon" :class="classMap[seller.supports
+							[index].type]">
 							</span>
-							<span class="text">{{seller.supports[$index].description}}</span>
+							<span class="text">{{seller.supports[index]
+							.description}}</span>
 						</li>
 					</ul>
 					<div class="title">
@@ -72,12 +75,13 @@
 				<i class="icon-close"></i>
 			</div>
 		</div>
+		</transition>
 
 	</div> 
 </template>
 
 <script>
-import star from 'components/star/star';
+import star from '../../components/star/star.vue';
 
 export default{
 	props: {
@@ -109,7 +113,7 @@ export default{
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-@import "../../common/stylus/mixin.styl"
+@import "../../common/stylus/mixin.styl";
 
 .header
 	position: relative
@@ -230,12 +234,11 @@ export default{
 		width: 100%
 		height: 100%
 		overflow: auto
-		transition: all 0.5s
 		backdrop-filter: blur(10px)
-		&.fade-transition
-			opacity: 1
-			background: rgba(7,17,27,0.8)
-		&.fade-enter, &.fade-leave
+		background: rgba(7,17,27,0.8)
+		&.fade-enter-active, &.fade-leave-active
+			transition: opacity, .5s
+		&.fade-enter, &.fade-leave-to
 			opacity: 0
 		.detail-wrapper
 			width: 100%
