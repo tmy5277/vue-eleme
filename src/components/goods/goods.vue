@@ -1,7 +1,7 @@
 <template>
 	<div class="goods">
 
-		<div class="menu-wrapper">
+		<div class="menu-wrapper" ref="menuWrapper">
 			<ul>
 				<li class="menu-item" v-for="item in goods">
 					<span class="text border-1px">
@@ -13,7 +13,7 @@
 			</ul>
 		</div>
 
-		<div class="foods-wrapper">
+		<div class="foods-wrapper" ref="foodsWrapper">
 			<ul>
 				<li v-for="item in goods" class="food-list">
 					<h1 class="title">{{item.name}}</h1>
@@ -30,8 +30,8 @@
 									<span>好评率{{food.rating}}%</span>
 								</div>
 								<div class="price">
-									<span>￥{{food.price}}</span>
-									<span v-show="food.oldPrice">
+									<span class="now">￥{{food.price}}</span>
+									<span class="old" v-show="food.oldPrice">
 									￥{{food.oldPrice}}
 									</span>
 								</div>
@@ -46,6 +46,8 @@
 </template>
 
 <script>
+import BScroll from 'better-scroll';
+
 const ERR_OK =0;
 
 export default {
@@ -64,6 +66,9 @@ export default {
 			response = response.data;
 			if (response.errno == ERR_OK) {
 				this.goods = response.data;
+				this.$nextTick(() =>{
+					this._initScroll();
+				});
 				// console.log(this.goods);
 			}
 		});
@@ -71,6 +76,13 @@ export default {
 		this.classMap = ['decrease','discount','special','invoice','guarantee'];
 
 	},
+	methods: {
+		_initScroll(){
+			this.menuScroll = new BScroll(this.$refs.menuWrapper,{});
+
+			this.foodsScroll =new BScroll(this.$refs.foodsWrapper,{});
+		}
+	}
 };
 </script>
 
@@ -136,17 +148,34 @@ export default {
 				&:last-child
 					border-none()
 					margin-bottom: 0
-			    .icon
-			    	flex: 0 0 57px
-			    	margin-right: 10px
-			    .content
-			    	flex: 1
-			    	.name
-			    		margin: 2px 0 8px 0
-			    		height: 14px
-			    		line-height: 14px
-			    		font-size: 14px
-			    		color: rbg(7,17,27)
-
-
+				.icon
+					flex: 0 0 57px
+					margin-right: 10px
+				.content
+					flex: 1
+					.name
+						margin: 2px 0 8px 0
+						height: 14px
+						line-height: 14px
+						font-size: 14px
+						color: rgb(7,17,27)
+					.desc, extra
+						line-height: 10px
+						font-size: 10px
+						color: rgb(147,153,159)
+					.desc
+						margin-bottom: 8px
+					.extra
+						margin-right: 12px
+					.price
+						font-weight: 700
+						line-height: 24px
+					.now
+						margin-right: 8px
+						font-size: 14px
+						color: rgb(240,20,20)
+					.old
+						text-decoration: line-through
+						font-size: 10px
+						color: rgb(147,153,159)
 </style>
