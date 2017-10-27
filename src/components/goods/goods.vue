@@ -3,7 +3,11 @@
 
 		<div class="menu-wrapper" ref="menuWrapper">
 			<ul>
-				<li class="menu-item" v-for="item in goods">
+				<li class="menu-item" v-for="(item,index) in goods" 
+				:class="{'current':currentIndex===index}" 
+				@click="selectMenu(index,$event)">
+				<!-- 绑定个对象，如果currentIndex===index为true，
+				就会给li一个current的样式，如果为false，就没有 -->
 					<span class="text border-1px">
 						<span v-show="item.type>0" class="icon" 
 						:class="classMap[item.type]"></span>
@@ -63,6 +67,18 @@ export default {
 			scrollY: 0
 		};
 	},
+	computed: {
+		currentIndex() {
+			for(let i=0;i<this.listHeight.length;i++){
+				let height1 = this.listHeight[i];
+				let height2 = this.listHeight[i+1];
+				if (!height2 || (this.scrollY >= height1 
+					&& this.scrollY < height2)) {
+					return i;
+				}
+			}
+		}
+	},
 	created() {
 		this.$http.get('api/goods').then((response)=> {
 			response = response.data;
@@ -81,15 +97,20 @@ export default {
 	},
 	methods: {
 		_initScroll(){
-			this.menuScroll = new BScroll(this.$refs.menuWrapper,{});
+			this.menuScroll = new BScroll(this.$refs.menuWrapper,{
+				click: true 
+				/*
+				插件需要监听touch start和touch end事件，移动端会阻止默认事件，但PC不会
+				*/
+			});
 
 			this.foodsScroll =new BScroll(this.$refs.foodsWrapper,{
 				probeType: 3
 			});
 
 			this.foodsScroll.on('scroll',(pos)=> {
-				this.scrollY = Math.round(pos.y)l
-			})l
+				this.scrollY = Math.abs(Math.round(pos.y));
+			});
 		},
 		_calculateHeight(){
 			let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook');
@@ -100,7 +121,16 @@ export default {
 				height +=item.clientHeight;
 				this.listHeight.push(height);
 			}
-		}
+		},
+		selectMenu(index,event) {
+			//浏览器原生点击事件也就是pc上，是没有._constructed属性的
+			if (!event._constructed) {
+				return;
+			}
+			let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook');
+			let el = foodList[index];
+			this.foodsScroll.scrollToElement(el,300);
+		},
 	}
 };
 </script>
@@ -125,6 +155,14 @@ export default {
 				width: 56px
 				line-height: 14px
 				padding: 0 12px
+				&.current
+					position: relative
+					z-index: 10
+					margin-top: -1px
+					background: #fff
+					.text
+						font-weight: 700
+						border-none()
 				.text
 					display: table-cell
 					width: 56px
