@@ -46,11 +46,14 @@
 			</ul>
 		</div>
 
+		<shopcart></shopcart>
+
 	</div>
 </template>
 
 <script>
 import BScroll from 'better-scroll';
+import shopcart from '../shopcart/shopcart.vue';
 
 const ERR_OK =0;
 
@@ -131,7 +134,11 @@ export default {
 			let el = foodList[index];
 			this.foodsScroll.scrollToElement(el,300);
 		},
-	}
+	},
+	
+	components: {
+		shopcart
+	},
 };
 </script>
 
