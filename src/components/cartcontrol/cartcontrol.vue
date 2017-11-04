@@ -5,13 +5,15 @@
 			<span class="inner icon-remove_circle_outline"></span>
 		</div>
 	</transition>
-		<div class="cart-count" v-show="food.count>0">{{food.count}}</div>
+		<div class="cart-count" v-show="food.count>0">{{food.count}}
+		</div>
 		<div class="cart-add icon-add_circle" @click="addCart($event)"></div>
 	</div>
 </template>
 
 <script>
 import Vue from 'vue';
+import Bus from '../../common/js/bus.js';
 
 	export default {
 		props: {
@@ -33,6 +35,7 @@ import Vue from 'vue';
 				}else{
 					this.food.count++;
 				}
+				Bus.$emit('cart.add',event.target);
 			},
 			decreaseCart(event) {
 				if (!event._constructed) {
@@ -55,7 +58,7 @@ import Vue from 'vue';
 			transition: all 0.4s linear
 			&.move-transition//完成状态
 				opacity: 1
-				transform: translate3D(0,0,0)
+				transform: translate3d(0,0,0)
 			.inner
 				display: inline-block
 				line-height: 24px
@@ -63,11 +66,11 @@ import Vue from 'vue';
 				color: rgb(0,160,220)
 				transition: all 0.4s linear
 				transform: rotate(0)//完成状态
-			&.move-enter, &.move-leave
-				//开始过渡时的状态
-			    //decrease按钮的v-show改变会触发
+			&.move-enter, &.move-leave-to
+				/*开始过渡时的状态
+			      decrease按钮的v-show改变会触发*/
 				opacity: 0
-				transform: translate3D(24px,0,0)
+				transform: translate3d(24px,0,0)
 				.inner
 					transform: rotate(180deg)
 		.cart-count

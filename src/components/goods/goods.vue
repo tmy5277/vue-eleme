@@ -119,6 +119,7 @@ export default {
 
 		this.classMap = ['decrease','discount','special','invoice','guarantee'];
 
+
 	},
 	methods: {
 		_initScroll(){
@@ -156,7 +157,7 @@ export default {
 			let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook');
 			let el = foodList[index];
 			this.foodsScroll.scrollToElement(el,300);
-		},
+		}
 	},
 	
 	components: {
