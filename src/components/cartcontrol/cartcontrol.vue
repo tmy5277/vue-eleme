@@ -56,9 +56,6 @@ import Bus from '../../common/js/bus.js';
 			display: inline-block
 			padding: 6px
 			transition: all 0.4s linear
-			&.move-transition//完成状态
-				opacity: 1
-				transform: translate3d(0,0,0)
 			.inner
 				display: inline-block
 				line-height: 24px
