@@ -1,12 +1,18 @@
 <template>
     <div class="ratingselect">
         <div class="rating-type border-1px">
-            <span class="block positive" :class="{'active' : selectType===2}">{{desc.all}}<span class="count">47</span>
+            <span @click="select(2,$event)" class="block positive" :class="{'active' : selectedType===2}">{{desc.all}}
+                <span class="count">{{ratings.length}}</span>
             </span>
-            <span class="block positive" :class="{'active' : selectType===0}">{{desc.positive}}<span class="count">40</span></span>
-            <span class="block negative" :class="{'active' : selectType===1}">{{desc.negative}}<span class="count">7</span></span>
+            <span @click="select(0,$event)" class="block positive" :class="{'active' : selectedType===0}">{{desc.positive}}
+                <span class="count">{{positives.length}}</span>
+            </span>
+            <span @click="select(1,$event)" class="block negative" :class="{'active' : selectedType===1}">{{desc.negative}}
+                <span class="count">{{negatives.length}}</span>
+            </span>
         </div>
-        <div class="switch" :class="{'on' : onlyContent}">
+        <div @click="toggleContent($event)" class="switch" 
+        :class="{'on' : onlyContentSwitch}">
             <i class="icon-check_circle"></i>
             <span class="text">只看有内容的评价</span>
         </div>
@@ -14,6 +20,8 @@
 </template>
 
 <script>
+import Bus from '../../common/js/bus.js';
+
 const POSITIVE = 0;
 const NEGATIVE = 1;
 const ALL = 2;
@@ -43,6 +51,40 @@ const ALL = 2;
                         negative: '不满意'
                     };
                 }
+            }
+        },
+        data() {
+            return {
+                selectedType: this.selectType,
+                onlyContentSwitch: this.onlyContent
+            }
+        },
+        computed: {
+            positives() {
+                return this.ratings.filter((rating) => {
+                    return rating.rateType === POSITIVE;
+                })
+            },
+            negatives() {
+                 return this.ratings.filter((rating) => {
+                    return rating.rateType === NEGATIVE;
+                })
+            }
+        },
+        methods: {
+            select(type,event) {
+                if (!event._constructed) {
+                    return;
+                }
+                this.selectedType = type;
+                Bus.$emit('ratingtype.select',type);
+            },
+            toggleContent(event) {
+                if (!event._constructed) {
+                    return;
+                }
+                this.onlyContentSwitch = !this.onlyContentSwitch;
+                Bus.$emit('content.toggle',this.onlyContentSwitch);
             }
         }
     };
