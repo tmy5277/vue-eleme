@@ -120,6 +120,9 @@ import BScroll from 'better-scroll';
 				this.drop(target);
 			});
 		},
+		beforeDestroy() {
+			Bus.$off('cart.add');
+		},
 		computed: {
 			totalPrice() {
 				let total = 0;

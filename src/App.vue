@@ -19,6 +19,7 @@
 <script>
 
 import vheader from 'components/header/header.vue';
+import Bus from 'common/js/bus.js';
 
 const ERR_OK =0;
 
