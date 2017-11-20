@@ -86,7 +86,7 @@ export default {
 		return {
 			showFlag: false,
             selectType: ALL,
-            onlyContent: false,
+            onlyContent: true,
             desc: {
                 all: '全部',
                 positive: '满意',
