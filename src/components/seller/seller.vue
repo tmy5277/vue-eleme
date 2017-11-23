@@ -1,6 +1,6 @@
 <template>
 
-    <div class="seller">
+    <div class="seller" ref="sellerBS">
         <div class="seller-content">
             <div class="overview">
                 <h1 class="title">{{seller.name}}</h1>
@@ -31,6 +31,23 @@
                 </ul>
             </div>
             <split></split>
+            <div class="bulletin">
+                <h1 class="title">公告与活动</h1>
+                <div class="content-wrapper border-1px">
+                    <p class="content">{{seller.bulletin}}</p>
+                </div>
+
+                <ul v-if="seller.supports" class="supports">
+                    <li class="support-item border-1px" 
+                    v-for="(item,index) in seller.supports">
+                        <span class="icon" 
+                        :class="classMap[seller.supports[index].type]">
+                        </span>
+                        <span class="text">
+                        {{seller.supports[index].description}}</span>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 
@@ -39,11 +56,36 @@
 <script>
 import star from '../star/star.vue';
 import split from '../split/split.vue';
+import BScroll from 'better-scroll';
 
 export default{
 	props: {
         seller: {
             type: Object
+        }
+    },
+    created(){
+        this.classMap = ['decrease','discount','special','invoice','guarantee'];
+
+        this._initScroll();
+    },
+    methods: {
+        _initScroll(){
+            this.$nextTick(() => {
+                if (!this.scroll) {
+                    this.scroll = new BScroll(this.$refs.sellerBS, {
+                        click: true
+                    });
+                } else {
+                    this.scroll.refresh();
+                }
+            });
+        }
+        
+    },
+    watch: {
+        seller() {
+            this._initScroll();
         }
     },
     components: {
@@ -106,4 +148,47 @@ export default{
                         color: rgb(7,17,27)
                         .stress
                             font-size: 24px
+        .bulletin
+            padding: 18px 18px 0 18px
+            .title
+                margin-bottom: 8px
+                line-height: 14px
+                font-size: 14px
+                color: rgb(7,17,27)
+            .content-wrapper
+                padding: 0 12px 16px 12px
+                border-1px(rgba(7,17,27,0.1))
+                .content
+                    line-height: 24px
+                    font-size: 12px
+                    font-weight: 200
+                    color: rgb(240,20,20)
+            .supports
+                .support-item
+                    padding: 16px 12px
+                    font-size: 0
+                    border-1px(rgba(7,17,27,0.1))
+                    .icon
+                        display: inline-block
+                        width: 16px
+                        height: 16px
+                        vertical-align: top
+                        margin-right: 6px
+                        background-size: 16px 16px
+                        background-repeat: no-repeat
+                        &.decrease
+                            bg-img('decrease_4')
+                        &.discount
+                            bg-img('discount_4')
+                        &.guarantee
+                            bg-img('guarantee_4')
+                        &.invoice
+                            bg-img('invoice_4')
+                        &.special
+                            bg-img('special_4')
+                    .text
+                        line-height: 16px
+                        font-size: 12px
+                        font-weight: 200
+                        color: rgb(7,17,27)
 </style>
