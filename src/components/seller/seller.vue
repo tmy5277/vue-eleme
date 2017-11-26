@@ -48,6 +48,7 @@
                     </li>
                 </ul>
             </div>
+            <split></split>
         </div>
     </div>
 
@@ -168,6 +169,8 @@ export default{
                     padding: 16px 12px
                     font-size: 0
                     border-1px(rgba(7,17,27,0.1))
+                    &:last-child
+                        border-none()
                     .icon
                         display: inline-block
                         width: 16px
