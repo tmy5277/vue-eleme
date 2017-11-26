@@ -49,6 +49,18 @@
                 </ul>
             </div>
             <split></split>
+            <div class="pics">
+                <h1 class="title">商家实景</h1>
+                <div class="pic-wrapper">
+                    <div class="pic-list" ref="picList">
+                        <ul>
+                            <li class="pic-item" v-for="pic in seller.pics">
+                                <img :src="pic" width="120" height="90">
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -69,6 +81,7 @@ export default{
         this.classMap = ['decrease','discount','special','invoice','guarantee'];
 
         this._initScroll();
+        this._initPicScroll();
     },
     methods: {
         _initScroll(){
@@ -81,12 +94,32 @@ export default{
                     this.scroll.refresh();
                 }
             });
-        }
-        
+        },
+        _initPicScroll() {
+            this.$nextTick(() => { 
+            //不加的话，一开始$refs.picList还没渲染出来没有style属性，会报错
+                if (this.seller.pics) {
+                    let picWidth = 120;
+                    let margin =6;
+                    let width =(picWidth+margin) * this.seller.pics.length - margin;
+                    // console.log(this.$refs.picList);
+                    this.$refs.picList.style.width = width + 'px';
+                    if (!this.picScroll) {
+                        this.picScroll = new BScroll(this.$refs.picList, {
+                            scrollX: true,
+                            eventPassthrough: 'vertical'
+                        });
+                    } else {
+                        this.picScroll.refresh();                    
+                    }    
+                }
+            });
+        }, 
     },
     watch: {
         seller() {
             this._initScroll();
+            this._initPicScroll();
         }
     },
     components: {
@@ -194,4 +227,24 @@ export default{
                         font-size: 12px
                         font-weight: 200
                         color: rgb(7,17,27)
+        .pics
+            padding: 18px
+            .title
+                margin-bottom: 12px
+                line-height: 14px
+                font-size: 14px
+                color: rgb(7,17,27)
+            .pic-wrapper
+                width: 100%
+                overflow: hidden
+                white-space: nowrap
+                .pic-list
+                    font-size: 0
+                    .pic-item
+                        display: inline-block
+                        margin-right: 6px
+                        width: 120px
+                        height: 90px
+                        &:last-child
+                            margin-right: 0
 </style>
