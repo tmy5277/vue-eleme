@@ -105,30 +105,32 @@ export default{
                        
                     });
 
-                     Bus.$on('ratingtype.select',type => {
-                        // console.log(type);
-                        this.selectType = type;
-                        this.$nextTick(() => {
-                            this.scroll.refresh();
-                        });
-                    });
-
-                    Bus.$on('content.toggle',toggle => {
-                        // console.log(toggle);
-                        this.onlyContent = toggle;
-                        this.$nextTick(() => {
-                            this.scroll.refresh();
-                        });
-                    });
-
-
                 });
                 // console.log(this.ratings);
             }
         });
 
     },
-    beforeDestroy() {
+    activated() {  //activated 和 deactivated 这两个钩子是keep-alive触发的
+        this.$nextTick(() => {
+            Bus.$on('ratingtype.select',type => {
+                // console.log(type+'123');
+                this.selectType = type;
+                this.$nextTick(() => {
+                    this.scroll.refresh();
+                });
+            });
+
+            Bus.$on('content.toggle',toggle => {
+                // console.log(toggle);
+                this.onlyContent = toggle;
+                this.$nextTick(() => {
+                    this.scroll.refresh();
+                });
+            });
+        });
+    },
+    deactivated() {
         Bus.$off('ratingtype.select');
         Bus.$off('content.toggle');
     },

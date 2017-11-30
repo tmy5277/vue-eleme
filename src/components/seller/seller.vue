@@ -108,8 +108,8 @@ export default{
     created(){
         this.classMap = ['decrease','discount','special','invoice','guarantee'];
 
-        this._initScroll();
-        this._initPicScroll();
+        // this._initScroll();
+        // this._initPicScroll();
     },
     methods: {
         _initScroll(){

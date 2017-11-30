@@ -134,7 +134,7 @@ export default {
             return formatDate(date,'yyyy-MM-dd hh:mm');
         }
     },
-    created() {
+    activated() {
         this.$nextTick(() => {
             Bus.$on('ratingtype.select',type => {
                 // console.log(type);
@@ -154,7 +154,7 @@ export default {
         });
         
     },
-    beforeDestroy() {
+    deactivated() {
         Bus.$off('ratingtype.select');
         Bus.$off('content.toggle');
     },
@@ -202,7 +202,7 @@ export default {
                         display: block
                         padding: 10px
                         font-size: 20px
-                        color: #eee
+                        color: rgb(0,160,220)
             .content
                 position: relative
                 padding: 18px

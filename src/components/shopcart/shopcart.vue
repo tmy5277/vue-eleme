@@ -69,191 +69,188 @@ import Bus from '../../common/js/bus.js';
 import cartcontrol from '../cartcontrol/cartcontrol.vue';
 import BScroll from 'better-scroll';
 
-	export default {
-		props: {
-			selectFoods: {
-				type: Array,
-				default() {
-					return [];
+export default {
+	props: {
+		selectFoods: {
+			type: Array,
+			default() {
+				return [];
+			}
+		},
+		deliveryPrice:{
+			type: Number,
+			default: 0
+		},
+		minPrice:{
+			type: Number,
+			default: 0
+		}
+	},
+	data() {
+		return {
+			balls:[
+				{
+					id: 0,
+					show: false
+				},
+				{
+					id: 1,
+					show: false
+				},
+				{
+					id: 2,
+					show: false
+				},
+				{
+					id: 3,
+					show: false
+				},
+				{
+					id: 4,
+					show: false
+				},
+			],
+			dropBalls:[],
+			fold: true    //折叠
+		}
+	},
+	created() {
+		Bus.$on('cart.add',target => {
+			// console.log(target);
+			this.drop(target);
+		});
+	},
+	computed: {
+		totalPrice() {
+			let total = 0;
+			this.selectFoods.forEach((food) => {
+				total += food.price * food.count;
+			});
+			return total;
+		},
+		totalCount() {
+			let count = 0;
+			this.selectFoods.forEach((food) => {
+				count += food.count;			
+			});
+			return count;
+		},
+		payDesc() {
+			if (this.totalPrice === 0) {
+				return `￥${this.minPrice}元起送`;
+			}
+			else if(this.totalPrice < this.minPrice) {
+				let diff = this.minPrice - this. totalPrice;
+				return `还差${diff}元起送`;
+			}
+			else{
+				return '去结算';
+			}
+		},
+		payClass() {
+			if (this.totalPrice < this.minPrice) {
+				return "not-enough";
+			}
+			else{
+				return "enough";
+			}
+		},
+		listShow() {
+			if (!this.totalCount) {
+				this.fold = true;
+				return false;
+			}
+			let show = !this.fold;
+			if (show) {
+				this.$nextTick(() => {
+					if (!this.scroll) {
+					this.scroll = new BScroll(this.$refs.listContent, {
+						click: true
+					});
+					} else {
+						this. scroll.refresh();
+					}
+					
+				});
+			}
+			return show;
+		}
+
+	},
+	methods: {
+		drop(el) {
+			// console.log(el);
+			for (let i = 0; i < this.balls.length; i++) {
+				let ball = this.balls[i];
+				if (!ball.show) {
+					ball.show = true;
+					ball.el = el;
+					this.dropBalls.push(ball);
+					return;
 				}
-			},
-			deliveryPrice:{
-				type: Number,
-				default: 0
-			},
-			minPrice:{
-				type: Number,
-				default: 0
 			}
 		},
-		data() {
-			return {
-				balls:[
-					{
-						id: 0,
-						show: false
-					},
-					{
-						id: 1,
-						show: false
-					},
-					{
-						id: 2,
-						show: false
-					},
-					{
-						id: 3,
-						show: false
-					},
-					{
-						id: 4,
-						show: false
-					},
-				],
-				dropBalls:[],
-				fold: true    //折叠
+		beforeDrop(el) {
+			let count = this.balls.length;
+			while(count--) {
+				let ball = this.balls[count];
+				if (ball.show) {
+					let rect = ball.el.getBoundingClientRect();
+					let x = rect.left-32;
+					let y = -(window.innerHeight - rect.top - 22);
+					//x,y 相对于样式中定好的位置（左下）的偏移量
+					el.style.display = '';
+					el.style.webkitTransform = `translate3d(0,${y}px,0)`;
+					el.style.transform = `translate3d(0,${y}px,0)`;
+					let inner = el.getElementsByClassName('inner-hook')[0];
+					inner.style.webkitTransform = `translate3d(${x}px,0,0)`;
+					inner.style.transform = `translate3d(${x}px,0,0)`;
+				}
 			}
 		},
-		created() {
-			Bus.$on('cart.add',target => {
-				// console.log(target);
-				this.drop(target);
+		dropping(el) {
+			let rf = el.offsetHeight;
+			this.$nextTick(() => {
+				//异步执行动画
+				el.style.webkitTransform = 'translate3d(0,0,0)';
+				el.style.transform = 'translate3d(0,0,0)';
+				let inner = el.getElementsByClassName('inner-hook')[0];
+				inner.style.webkitTransform = 'translate3d(0,0,0)';
+				inner.style.transform = 'translate3d(0,0,0)';
 			});
 		},
-		beforeDestroy() {
-			Bus.$off('cart.add');
-		},
-		computed: {
-			totalPrice() {
-				let total = 0;
-				this.selectFoods.forEach((food) => {
-					total += food.price * food.count;
-				});
-				return total;
-			},
-			totalCount() {
-				let count = 0;
-				this.selectFoods.forEach((food) => {
-					count += food.count;			
-				});
-				return count;
-			},
-			payDesc() {
-				if (this.totalPrice === 0) {
-					return `￥${this.minPrice}元起送`;
-				}
-				else if(this.totalPrice < this.minPrice) {
-					let diff = this.minPrice - this. totalPrice;
-					return `还差${diff}元起送`;
-				}
-				else{
-					return '去结算';
-				}
-			},
-			payClass() {
-				if (this.totalPrice < this.minPrice) {
-					return "not-enough";
-				}
-				else{
-					return "enough";
-				}
-			},
-			listShow() {
-				if (!this.totalCount) {
-					this.fold = true;
-					return false;
-				}
-				let show = !this.fold;
-				if (show) {
-					this.$nextTick(() => {
-						if (!this.scroll) {
-						this.scroll = new BScroll(this.$refs.listContent, {
-							click: true
-						});
-						} else {
-							this. scroll.refresh();
-						}
-						
-					});
-				}
-				return show;
+		afterDrop(el) {
+			let ball = this.dropBalls.shift();
+			if (ball) {
+				ball.show = false;
+				el.style.display ='none';
 			}
-
 		},
-		methods: {
-			drop(el) {
-				// console.log(el);
-				for (let i = 0; i < this.balls.length; i++) {
-					let ball = this.balls[i];
-					if (!ball.show) {
-						ball.show = true;
-						ball.el = el;
-						this.dropBalls.push(ball);
-						return;
-					}
-				}
-			},
-			beforeDrop(el) {
-				let count = this.balls.length;
-				while(count--) {
-					let ball = this.balls[count];
-					if (ball.show) {
-						let rect = ball.el.getBoundingClientRect();
-						let x = rect.left-32;
-						let y = -(window.innerHeight - rect.top - 22);
-						//x,y 相对于样式中定好的位置（左下）的偏移量
-						el.style.display = '';
-						el.style.webkitTransform = `translate3d(0,${y}px,0)`;
-						el.style.transform = `translate3d(0,${y}px,0)`;
-						let inner = el.getElementsByClassName('inner-hook')[0];
-						inner.style.webkitTransform = `translate3d(${x}px,0,0)`;
-						inner.style.transform = `translate3d(${x}px,0,0)`;
-					}
-				}
-			},
-			dropping(el) {
-				let rf = el.offsetHeight;
-				this.$nextTick(() => {
-					//异步执行动画
-					el.style.webkitTransform = 'translate3d(0,0,0)';
-					el.style.transform = 'translate3d(0,0,0)';
-					let inner = el.getElementsByClassName('inner-hook')[0];
-					inner.style.webkitTransform = 'translate3d(0,0,0)';
-					inner.style.transform = 'translate3d(0,0,0)';
-				});
-			},
-			afterDrop(el) {
-				let ball = this.dropBalls.shift();
-				if (ball) {
-					ball.show = false;
-					el.style.display ='none';
-				}
-			},
-			toggleList() {
-				if (!this.totalCount) {
-					return;
-				}
-				this.fold = !this.fold;
-			},
-			empty() {
-				this.selectFoods.forEach((food) => {
-					food.count=0;
-				})
-			},
-			hideList() {
-				this.fold = true;
-			},
-			pay() {
-				if (this.totalPrice < this.minPrice) {
-					return;
-				}
-				alert(`需要支付${this.totalPrice}元`);
-			},
+		toggleList() {
+			if (!this.totalCount) {
+				return;
+			}
+			this.fold = !this.fold;
 		},
-		components: {
-			cartcontrol
-		}
-	};
+		empty() {
+			this.selectFoods.forEach((food) => {
+				food.count=0;
+			})
+		},
+		hideList() {
+			this.fold = true;
+		},
+		pay() {
+			if (this.totalPrice < this.minPrice) {
+				return;
+			}
+			alert(`需要支付${this.totalPrice}元`);
+		},
+	},
+	components: {
+		cartcontrol
+	}
+};
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
