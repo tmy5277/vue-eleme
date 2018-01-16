@@ -27,7 +27,7 @@ var seller = appData.seller;
 var goods = appData.goods;
 var ratings = appData.ratings;
 
-var apiRoutes = express.Router();
+var apiRoutes = express.Router();  // 初步学习了node.js 回来复习下 这里不引用Router也可以
 
 apiRoutes.get('/seller',function(req,res){
   res.json({
