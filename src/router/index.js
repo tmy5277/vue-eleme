@@ -30,5 +30,5 @@ export default new Router({
     	component:Seller
     },
   ],
-  linkActiveClass:'active',//路由激活时赋予一个'active'的class
+  linkActiveClass:'active',//路由激活时赋予一个'active'的class，用于改变激活路由时的样式
 })
